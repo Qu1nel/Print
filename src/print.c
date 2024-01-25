@@ -1,13 +1,16 @@
+#include <errno.h>
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 
-#define FORMAT_SEP(i, N, SEP) (((i) == (N)-1) ? "" : SEP)
+#define FORMAT_SEP(i, N, SEP)        (((i) == (N)-1) ? "" : SEP)
+#define SET_DATA(x)                  va_arg(argptr, x), FORMAT_SEP(i, n, sep)
+#define write_stdout(_format, value) printf(_format "%s", SET_DATA(value))
 
 
-typedef enum types { UI8, I8, UI16, I16, UI32, I32, UI64, I64, DOUBLE, STRING, VOID } _Type;
+typedef enum types { CHAR, UI8, I8, UI16, I16, UI32, I32, UI64, I64, DOUBLE, STRING, VOID } _Type;
 
 
 static void append_type(_Type type);
@@ -24,6 +27,10 @@ static void append_type(_Type type)
     _TypeStack.hidden_types_stack[idx] = type;
 }
 
+void type_add_char(void)
+{
+    _TypeStack.append(CHAR);
+}
 
 void type_add_ui8(void)
 {
@@ -89,40 +96,45 @@ void _print(const char* restrict sep, const char* restrict end, const size_t n, 
     for (size_t i = 0; i < n; ++i) {
         switch (_TypeStack.hidden_types_stack[i]) {
             case UI8:
-                printf("%" PRIu8 "%s", va_arg(argptr, uint8_t), FORMAT_SEP(i, n, sep));
+                write_stdout("%" PRIu8, int);
                 break;
             case I8:
-                printf("%" PRIi8 "%s", va_arg(argptr, int8_t), FORMAT_SEP(i, n, sep));
+                write_stdout("%" PRIi8, int);
                 break;
             case UI16:
-                printf("%" PRIu16 "%s", va_arg(argptr, uint16_t), FORMAT_SEP(i, n, sep));
+                write_stdout("%" PRIu16, int);
                 break;
             case I16:
-                printf("%" PRIi16 "%s", va_arg(argptr, int16_t), FORMAT_SEP(i, n, sep));
+                write_stdout("%" PRIi16, int);
                 break;
             case UI32:
-                printf("%" PRIu32 "%s", va_arg(argptr, uint32_t), FORMAT_SEP(i, n, sep));
+                write_stdout("%" PRIu32, uint32_t);
                 break;
             case I32:
-                printf("%" PRIi32 "%s", va_arg(argptr, int32_t), FORMAT_SEP(i, n, sep));
+                write_stdout("%" PRIi32, int32_t);
                 break;
             case UI64:
-                printf("%" PRIu64 "%s", va_arg(argptr, uint64_t), FORMAT_SEP(i, n, sep));
+                write_stdout("%" PRIu64, uint64_t);
                 break;
             case I64:
-                printf("%" PRIi64 "%s", va_arg(argptr, int64_t), FORMAT_SEP(i, n, sep));
+                write_stdout("%" PRIi64, int64_t);
                 break;
             case DOUBLE:
-                printf("%f%s", va_arg(argptr, double), FORMAT_SEP(i, n, sep));
+                write_stdout("%f", double);
+                break;
+            case CHAR:
+                write_stdout("%c", int);
                 break;
             case STRING:
-                printf("%s%s", va_arg(argptr, char*), FORMAT_SEP(i, n, sep));
+                write_stdout("%s", char*);
                 break;
             case VOID:
-                printf("0x%p%s", va_arg(argptr, void*), FORMAT_SEP(i, n, sep));
+                write_stdout("0x%p", void*);
                 break;
             default:
-                printf("Internal '_print' error line: %d in %s\n", __LINE__, __FILE__);
+                char msg[1024];
+                sprintf_s(msg, 1024, "Internal '_print' error line: %d in %s\n", __LINE__, __FILE__);
+                perror(msg);
                 abort();
         }
     }
