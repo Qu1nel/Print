@@ -114,10 +114,10 @@ void _print(const char* restrict sep, const char* restrict end, const size_t n, 
                 write_stdout("%" PRIi32, int32_t);
                 break;
             case UI64:
-                write_stdout("%" PRIu64, uint64_t);
+                write_stdout("%lu", unsigned long);
                 break;
             case I64:
-                write_stdout("%" PRIi64, int64_t);
+                write_stdout("%li", long);
                 break;
             case DOUBLE:
                 write_stdout("%f", double);
