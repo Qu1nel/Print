@@ -35,7 +35,7 @@
 
 
 LIBNAME 	:= Print
-TARGET_NAME := lib$(LIBNAME).so
+TARGET_NAME := $(LIBNAME).lib
 
 SRC_DIR     := src
 INCLD_DIR 	:= include
@@ -47,13 +47,13 @@ TARGET 		:= $(BUILD_DIR)/$(TARGET_NAME)
 OBJECTS     := $(patsubst %.c, $(OBJ_DIR)/%.o, $(patsubst $(SRC_DIR)/%, %, $(shell find $(SRC_DIR) -type f -name '*.c' 2>/dev/null)))
 DEPS 		:= $(OBJECTS:.o=.d)
 
-CC 			:= gcc
+CC 			:= clang
 CFLAGS 		:= -std=c17 -Wall -Werror -Wshadow -Wvla -Walloca -Wundef -Wfloat-equal \
 			   -Wstrict-prototypes -Wconversion -Wswitch-enum -Wswitch-default -Wimplicit-fallthrough \
-			   -Wunreachable-code -Wformat=2 -Wparentheses -Wmisleading-indentation -Wpedantic -pedantic -fPIC
+			   -Wunreachable-code -Wformat=2 -Wparentheses -Wmisleading-indentation -Wpedantic -pedantic
 
 CPPFLAGS 	:= -I$(INCLD_DIR) -MMD -MP
-LDFLAGS 	:= -shared
+LDFLAGS 	:=
 AR 			:= ar
 ARFLAGS 	:= -r -c -s
 
@@ -84,8 +84,8 @@ DIR_DUP     = mkdir -p $(@D)
 all: build
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS)
-	$(info [LINK] $@ : $(CC) $(LDFLAGS) -o $(TARGET_NAME) $(OBJECTS))
+	$(AR) $(ARFLAGS) $(TARGET) $(OBJECTS)
+	$(info [BUILD] $@ : $(AR) $(ARFLAGS) $(TARGET) $(OBJECTS))
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(DIR_DUP)
@@ -96,6 +96,8 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 .PHONY: build
 build: $(TARGET)  ## Build library
+	$(shell ranlib $(TARGET))
+	$(info [RABLIB] ralib $(TARGET))
 
 .PHONY: re
 re:  ## Rebuild library
@@ -104,8 +106,9 @@ re:  ## Rebuild library
 
 .PHONY: example
 example: example.c  ## Builds a file using the library from the readme
-	$(CC) $(CFLAGS) -Lbuild/ $(CPPFLAGS) -o main $< -l$(LIBNAME) -Wl,-rpath,./
-	$(info [COMPILED] main: $(CC) $(CFLAGS) -L$(BUILD_DIR) $(CPPFLAGS) -o main $< -l$(LIBNAME) -Wl,-rpath,./$(BUILD_DIR)/)
+	$(CC) $(CFLAGS) -L$(BUILD_DIR) $(CPPFLAGS) -o main $< -l$(LIBNAME)
+	$(info [COMPILED] main: $(CC) $(CFLAGS) -L$(BUILD_DIR) $(CPPFLAGS) -o main $< -l$(LIBNAME))
+	rm main.d
 
 .PHONY: clean
 clean:  ## Remove all object and dep files
