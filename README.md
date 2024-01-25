@@ -49,7 +49,7 @@
 ## Overview
 
 <details>
-  <img src="../../../.github/assets/demo.png" alt="Use 'end' and 'sep' param" />
+  <img src="./.github/assets/demo.png" alt="Use 'end' and 'sep' param" />
 </details>
 
 ## Installation
