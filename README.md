@@ -56,15 +56,29 @@
 
 Requirements: >=gcc 10.0, >=clang 13.0.0
 
-The program is built using make.
+The static library is built using make. (clang for `Pring.lib`)
 
 ```bash
 make build
 ```
 
+For testing and preview purposes:
+
+```bash
+make build
+make example
+./main
+```
+
 ## Documentation
 
-...
+The library `Print` provides 1 macro, 2 variables and a function:
+
+Marco `print(...)` macro is the main purpose of the library. The macro is used as a function to which the necessary parameters are passed. An important note is that the macro can support up to a **maximum of 64 arguments**, otherwise corrections in the source code will be needed (who needs to output more than 64 values?). The second point is that the `print(...)` *macro cannot be called without arguments*
+
+There are two variables: `print_end` and `print_sep`, i.e. the ending and value separator for the `print()` macro. Everything is exactly the same as in python. `print_end` is the `end` parameter, and `print_sap` is `sep`, respectively. Variables take a `char*` value.
+
+To reset the default values for the last two variables, there is a mini assembly function: `default_print()`.
 
 ## License
 
