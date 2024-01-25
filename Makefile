@@ -47,8 +47,8 @@ TARGET 		:= $(BUILD_DIR)/$(TARGET_NAME)
 OBJECTS     := $(patsubst %.c, $(OBJ_DIR)/%.o, $(patsubst $(SRC_DIR)/%, %, $(shell find $(SRC_DIR) -type f -name '*.c' 2>/dev/null)))
 DEPS 		:= $(OBJECTS:.o=.d)
 
-CC 			:= gcc
-CFLAGS 		:= -std=c11 -Wshadow -Wvla -Walloca -Wundef -Wfloat-equal \
+CC 			:= clang
+CFLAGS 		:= -std=c17 -Wall -Werror -Wshadow -Wvla -Walloca -Wundef -Wfloat-equal \
 			   -Wstrict-prototypes -Wconversion -Wswitch-enum -Wswitch-default -Wimplicit-fallthrough \
 			   -Wunreachable-code -Wformat=2 -Wparentheses -Wmisleading-indentation -Wpedantic -pedantic
 
@@ -70,6 +70,7 @@ DIR_DUP     = mkdir -p $(@D)
 # %.o 		- Compilation source files *.c -> *.o                                                  #
 # build 	- Build library                                                                        #
 # re 		- Rebuild library 	                                                                   #
+# example 	- Build excample file for testing
 # clean 	- Remove all *.o and *.d                                                               #
 # fcrean 	- Remove all *.o and *.d + library                                                     #
 #                                                                                                  #
@@ -99,9 +100,15 @@ build: $(TARGET)  ## Build library
 	$(info [RABLIB] ralib $(TARGET))
 
 .PHONY: re
-re:  # Rebuild library
+re:  ## Rebuild library
 	$(MAKE) fclean
 	$(MAKE) all
+
+.PHONY: example
+example: example.c  ## Builds a file using the library from the readme
+	$(CC) $(CFLAGS) -L$(BUILD_DIR) $(CPPFLAGS) -o main $< -l$(LIBNAME)
+	$(info [COMPILED] main: $(CC) $(CFLAGS) -L$(BUILD_DIR) $(CPPFLAGS) -o main $< -l$(LIBNAME))
+	rm main.d
 
 .PHONY: clean
 clean:  ## Remove all object and dep files
