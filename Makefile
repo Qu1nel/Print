@@ -35,7 +35,7 @@
 
 
 LIBNAME 	:= Print
-TARGET_NAME := lib$(LIBNAME).a
+TARGET_NAME := $(LIBNAME).lib
 
 SRC_DIR     := src
 INCLD_DIR 	:= include
