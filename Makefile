@@ -35,7 +35,7 @@
 
 
 LIBNAME 	:= Print
-TARGET_NAME := $(LIBNAME).lib
+TARGET_NAME := lib$(LIBNAME).a
 
 SRC_DIR     := src
 INCLD_DIR 	:= include
@@ -47,7 +47,7 @@ TARGET 		:= $(BUILD_DIR)/$(TARGET_NAME)
 OBJECTS     := $(patsubst %.c, $(OBJ_DIR)/%.o, $(patsubst $(SRC_DIR)/%, %, $(shell find $(SRC_DIR) -type f -name '*.c' 2>/dev/null)))
 DEPS 		:= $(OBJECTS:.o=.d)
 
-CC 			:= clang
+CC 			:= gcc
 CFLAGS 		:= -std=c17 -Wall -Werror -Wshadow -Wvla -Walloca -Wundef -Wfloat-equal \
 			   -Wstrict-prototypes -Wconversion -Wswitch-enum -Wswitch-default -Wimplicit-fallthrough \
 			   -Wunreachable-code -Wformat=2 -Wparentheses -Wmisleading-indentation -Wpedantic -pedantic

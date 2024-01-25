@@ -91,6 +91,7 @@ void type_add_void(void)
 void _print(const char* restrict sep, const char* restrict end, const size_t n, ...)
 {
     va_list argptr;
+    char msg[1024] = {0};
     va_start(argptr, n);
 
     for (size_t i = 0; i < n; ++i) {
@@ -132,7 +133,6 @@ void _print(const char* restrict sep, const char* restrict end, const size_t n, 
                 write_stdout("0x%p", void*);
                 break;
             default:
-                char msg[1024];
                 sprintf_s(msg, 1024, "Internal '_print' error line: %d in %s\n", __LINE__, __FILE__);
                 perror(msg);
                 abort();
