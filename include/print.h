@@ -13,6 +13,8 @@ void default_print(void)
     print_end = "\n";
 }
 
+void type_add_char(void);
+
 void type_add_ui8(void);
 void type_add_i8(void);
 
@@ -32,21 +34,35 @@ void type_add_void(void);
 
 // clang-format off
 
-#define type_add(x)         \
-	_Generic((x),           \
-        int8_t: type_add_i8,    \
-		uint8_t: type_add_ui8,	\
-		uint16_t: type_add_ui16,\
-		int16_t: type_add_i16,	\
-		uint32_t: type_add_ui32,\
-		int32_t: type_add_i32,	\
-		uint64_t: type_add_ui64,\
-		int64_t: type_add_i64,	\
-        float: type_add_double, \
-		double: type_add_double,\
-		char*: type_add_str,	\
-	default: type_add_void	    \
-)()
+#define type_add(x)						\
+	_Generic((x),						\
+		char*: type_add_str,			\
+		char: type_add_char,			\
+		short: type_add_i16,			\
+		int: type_add_i32,				\
+		long: type_add_i64,				\
+		float: type_add_double,			\
+		double: type_add_double,		\
+	default: _Generic((x),				\
+		signed char: type_add_i8,		\
+		signed short: type_add_i16,		\
+		signed int: type_add_i32,		\
+		signed long: type_add_i64,		\
+		unsigned char: type_add_ui8,	\
+		unsigned short: type_add_ui16,	\
+		unsigned int: type_add_ui32,	\
+		unsigned long: type_add_ui64,	\
+	default: _Generic((x),				\
+		int8_t: type_add_i8,			\
+		int16_t: type_add_i16,			\
+		int32_t: type_add_i32,			\
+		int64_t: type_add_i64,			\
+		uint8_t: type_add_ui8,			\
+		uint16_t: type_add_ui16,		\
+		uint32_t: type_add_ui32,		\
+		uint64_t: type_add_ui64,		\
+	default: type_add_void				\
+)))()
 
 #include "print_n.h"
 
@@ -86,14 +102,13 @@ void type_add_void(void);
 
 
 #define PRINT_RSEQ_N() \
-	64, 63, 62, 61, 60, \
-	59, 58, 57, 56, 55, 54, 53, 52, \
-	51, 50, 49, 48, 47, 46, 45, 44, \
-	43, 42, 41, 40, 39, 38, 37, \
-	36, 35, 34, 33, 32, 31, 30, \
-	29, 28, 27, 26, 25, 24, 23, \
-	22, 21, 20, 19, 18, 17, 16, \
-	15, 14, 13, 12, 11, 10, 9,\
+	64, 63, 62, 61, 60, 59, 58, 57, \
+	56, 55, 54, 53, 52, 51, 50, 49, \
+	48, 47, 46, 45, 44, 43, 42, 41, \
+	40, 39, 38, 37, 36, 35, 34, 33, \
+	32, 31, 30, 29, 28, 27, 26, 25, \
+	24, 23, 22, 21, 20, 19, 18, 17, \
+	16, 15, 14, 13, 12, 11, 10, 9,	\
 	8, 7, 6, 5, 4, 3, 2, 1, 0
 
 // clang-format on
