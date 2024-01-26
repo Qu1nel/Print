@@ -94,6 +94,12 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 -include $(DEPS)
 
+.PHONY: tests
+tests:
+	$(shell gcc testing/tests.c src/print.c -Iinclude -std=c17 -o tests)
+	$(shell ./tests)
+	$(shell rm tests)
+
 .PHONY: build
 build: $(TARGET)  ## Build library
 	$(shell ranlib $(TARGET))
