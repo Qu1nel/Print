@@ -133,7 +133,7 @@ void _print(const char* restrict sep, const char* restrict end, const size_t n, 
                 write_stdout("0x%p", void*);
                 break;
             default:
-                sprintf_s(msg, 1024, "Internal '_print' error line: %d in %s\n", __LINE__, __FILE__);
+                snprintf(msg, 1024, "Internal '_print' error line: %d in %s\n", __LINE__, __FILE__);
                 perror(msg);
                 abort();
         }
