@@ -41,10 +41,12 @@ SRC_DIR     := src
 INCLD_DIR 	:= include
 BUILD_DIR   := build
 OBJ_DIR 	:= $(BUILD_DIR)/objects
+TEST_DIR	:= test
 
 TARGET 		:= $(BUILD_DIR)/$(TARGET_NAME)
 
 OBJECTS     := $(patsubst %.c, $(OBJ_DIR)/%.o, $(patsubst $(SRC_DIR)/%, %, $(shell find $(SRC_DIR) -type f -name '*.c' 2>/dev/null)))
+SOURCES		:= $(shell find $(SRC_DIR) -type f -name '*.c' 2>/dev/null)
 DEPS 		:= $(OBJECTS:.o=.d)
 
 CC 			:= clang
@@ -52,7 +54,7 @@ CFLAGS 		:= -std=c17 -Wall -Werror -Wshadow -Wvla -Walloca -Wundef -Wfloat-equal
 			   -Wstrict-prototypes -Wconversion -Wswitch-enum -Wswitch-default -Wimplicit-fallthrough \
 			   -Wunreachable-code -Wformat=2 -Wparentheses -Wmisleading-indentation -Wpedantic -pedantic
 
-CPPFLAGS 	:= -I$(INCLD_DIR) -MMD -MP
+CPPFLAGS 	:= -I$(INCLD_DIR) -I$(TEST_DIR) -MMD -MP
 LDFLAGS 	:=
 AR 			:= ar
 ARFLAGS 	:= -r -c -s
@@ -94,11 +96,13 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 -include $(DEPS)
 
-.PHONY: tests
-tests:
-	$(shell gcc testing/tests.c src/print.c -Iinclude -std=c17 -o tests)
-	$(shell ./tests)
-	$(shell rm tests)
+.PHONY: test
+test:  ## Testing framework
+	@mkdir -p $(TEST_DIR)
+	gcc $(TEST_DIR)/tests.c $(SOURCES) $(CPPFLAGS) -std=c17 -o testing
+	$(info [COMPILED] $@ : gcc $(TEST_DIR)/tests.c $(SOURCES) $(CPPFLAGS) -std=c17 -o test)
+	./testing
+	rm ./testing
 
 .PHONY: build
 build: $(TARGET)  ## Build library
