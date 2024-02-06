@@ -9,6 +9,8 @@
 #include <unistd.h>
 #include <errno.h>
 
+int fileno(FILE *stream);
+
 //Colors ANSI escape sequences
 #define CRED     "\x1b[31m"
 #define CGREEN   "\x1b[32m"
@@ -24,6 +26,8 @@ int ran = 0;
 int assert_failed = 0;
 char* current_test_suite = "";
 jmp_buf sigsegv_buf = {0};
+int stdout_backup = 0;
+int dev_null_fd = 0;
 FILE* ctestify_stdout;
 struct ComparerRet comparerret;
 char* messages[] = {
@@ -255,10 +259,12 @@ int main(){
     total_functions = 0;
     time_t start, end;
     // Disable stdout 
-    freopen("/dev/null", "a", stdout);
+    stdout_backup = dup(fileno(stdout));
+    dev_null_fd = open("/dev/null", O_WRONLY);
+    dup2(dev_null_fd, fileno(stdout));
     test_main();
     // Return stdout back 
-    freopen("/dev/tty", "a", stdout);
+    dup2(stdout_backup, fileno(stdout));
     if (total_functions == 0){
         fprintf(ctestify_stdout, CRED "No tests detected!\n" CRESET);
         return 0;
@@ -283,6 +289,8 @@ int main(){
     fprintf(ctestify_stdout, "%s[=========]%s Destroying testing environment...\n", CGREEN, CRESET);
     if (TestingEnvironmentDestroy())
         fprintf(ctestify_stdout, CRED "Testing environment destroy failure!\n" CRESET);
+    close(stdout_backup);
+    close(dev_null_fd);
     if (successed) fprintf(ctestify_stdout, "%s[ SUCCESS ]%s %d tests.\n", CGREEN, CRESET, successed);
     if (failed) fprintf(ctestify_stdout, "%s[ FAILURE ]%s %d tests.\n", CRED, CRESET, failed);
 }
