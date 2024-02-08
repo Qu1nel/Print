@@ -78,7 +78,8 @@ Marco `print(...)` macro is the main purpose of the library. The macro is used a
 
 There are two variables: `print_end` and `print_sep`, i.e. the ending and value separator for the `print()` macro. Everything is exactly the same as in python. `print_end` is the `end` parameter, and `print_sap` is `sep`, respectively. Variables take a `char*` value.
 
-To reset the default values for the last two variables, there is a mini assembly function: `default_print()`.
+To reset the default values for the last two variables, there is a mini assembly function: `default_print()`. To set
+values for the `end` and `sep`, there is a fucntion: `set_param_print`.
 
 ## License
 
