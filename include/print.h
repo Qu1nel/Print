@@ -13,7 +13,7 @@ void default_print(void)
     print_end = "\n";
 }
 
-void set_param_print(const char* restrict sep, const char* restrict end) {
+void set_param_print(char* restrict sep, char* restrict end) {
     print_sep = sep;
     print_end = end;
 }
