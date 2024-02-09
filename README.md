@@ -83,4 +83,4 @@ values for the `end` and `sep`, there is a fucntion: `set_param_print`.
 
 ## License
 
-[MIT]() © [Ivan Kovach](https://github.com/Qu1nel/)
+[MIT](./LICENSE) © [Ivan Kovach](https://github.com/Qu1nel/)
